@@ -160,7 +160,6 @@ def main():
                 #appends model to end of appropriate list
                 serialN[x].append(model)
                 serialN[x].append(date)
-                print(serialN)
                 loop3 = False
 
             except NumberError as e:
