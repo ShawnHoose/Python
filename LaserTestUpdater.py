@@ -19,6 +19,9 @@ class NumberError(Error):
 
 def main():
     desktopPath = os.path.join(os.environ["HOMEPATH"],'Desktop')
+    dt = datetime.now().date()
+    date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
+
     loop = True
     while loop:
         try:
@@ -153,9 +156,11 @@ def main():
                 checkSplit = serialN[x][0].split("-")
                 folderPath = FindLaserDataFolder(checkSplit[0],serialN[x][0])
                 serialized = folderPath.split("\\")[-1]
-                model = serialized.split(" ")[-1]
+                model = serialized.split(" ")[1]
                 #appends model to end of appropriate list
                 serialN[x].append(model)
+                serialN[x].append(date)
+                print(serialN)
                 loop3 = False
 
             except NumberError as e:
@@ -167,8 +172,7 @@ def main():
             except LengthError as e:
                 print("\nToo many tests have been indicated, please correct")
 
-    dt = datetime.now().date()
-    date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
+
     fileName = str(date) + ".csv"
     filePath = os.path.join(desktopPath, fileName)
 
