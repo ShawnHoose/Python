@@ -98,7 +98,6 @@ def main():
                         serialN[x].append(0)
                     else:
                         serialN[x].append("")
-                    print(serialN[x])
 
             else:
                 passedTestList = passedTests.split(",")
@@ -112,7 +111,6 @@ def main():
                         serialN[x].append(1)
                     else:
                         serialN[x].append("")
-            print(serialN)
 
         except ValueError as e:
             print("\nPlease input integers only\n")
@@ -128,10 +126,8 @@ def main():
         wr = csv.writer(file, quoting=csv.QUOTE_ALL)
         for x in range(0,len(serialN)):
             wr.writerow(serialN[x])
-            # for data in serialN[x]:
-            #     wr.writerow([data])
 
-        print("Success! The file has been saved to your desktop as " + fileName + "\n")
+        print("\nSuccess! The file has been saved to your desktop as " + fileName + "\n")
     print("Press Enter to exit this program...")
     input()
     exit()
