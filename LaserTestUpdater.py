@@ -39,7 +39,7 @@ def main():
                     SN = str(input("\n3rd Serial Number: "))
                     serialN[x].append(SN)
                 else:
-                    SN = str(input("\n" + str(x) +"th Serial Number: "))
+                    SN = str(input("\n" + str(x+1) +"th Serial Number: "))
                     serialN[x].append(SN)
 
                 checkSplit = serialN[x][0].split("-")
@@ -93,11 +93,11 @@ def main():
                     print("\nPlease input a correct integer corresponding to a test\n")
                 #Append the list to account for test results
                 for k in range(1,5):
-                    print(x,k)
                     if k is failedTest:
                         serialN[x].append(0)
                     else:
                         serialN[x].append("")
+                pass
 
             else:
                 passedTestList = passedTests.split(",")
@@ -118,7 +118,7 @@ def main():
         except LengthError as e:
             print("\nToo many tests have been indicated, please correct\n")
 
-    firstFileName = input("What would you like to name the CSV?")
+    firstFileName = input("\nWhat would you like to name the CSV? ")
     fileName = firstFileName + ".csv"
     filePath = os.path.join(desktopPath, fileName)
 
