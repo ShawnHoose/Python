@@ -2,7 +2,7 @@
 
 
 ### Imports ###
-from photonicsfolders2 import AutoUpdate
+from photonicsfolders2 import FindLaserDataFolder
 import shutil
 import csv
 import os
@@ -23,10 +23,16 @@ def main():
     while loop:
         try:
             laserNum = int(input("\nHow many lasers would you like to give data for? "))
+            if laserNum is 0:
+                raise NumberError
             serialN = [[] for x in range(0,laserNum)]
             loop = False
+
         except ValueError as e:
             print("\nPlease input an integer value")
+
+        except NumberError as e:
+            print("Enter a value greater than 0")
 
 
     #Get all serial numbers of the systems
@@ -143,6 +149,13 @@ def main():
                         else:
                             serialN[x].append("")
 
+                #obtains model type
+                checkSplit = serialN[x][0].split("-")
+                folderPath = FindLaserDataFolder(checkSplit[0],serialN[x][0])
+                serialized = folderPath.split("\\")[-1]
+                model = serialized.split(" ")[-1]
+                #appends model to end of appropriate list
+                serialN[x].append(model)
                 loop3 = False
 
             except NumberError as e:
