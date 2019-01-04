@@ -39,13 +39,23 @@ def main():
                     serialN[x].append(SN)
                 elif x == 1:
                     SN = str(input("\n2nd Serial Number: "))
+                    for j in range(0,len(serialN)):
+                        if str(SN) in serialN[j]:
+                            raise NumberError
                     serialN[x].append(SN)
                 elif x == 2:
                     SN = str(input("\n3rd Serial Number: "))
+                    for j in range(0,len(serialN)):
+                        if str(SN) in serialN[j]:
+                            raise NumberError
                     serialN[x].append(SN)
                 else:
                     SN = str(input("\n" + str(x+1) +"th Serial Number: "))
+                    for j in range(0,len(serialN)):
+                        if str(SN) in serialN[j]:
+                            raise NumberError
                     serialN[x].append(SN)
+
 
                 checkSplit = serialN[x][0].split("-")
                 #check to ensure Serial Number is in correct format
@@ -54,6 +64,8 @@ def main():
                 check3 = True
                 check4 = True
 
+                if len(checkSplit) is not 2:
+                    check4 = False
                 if len(checkSplit[0]) is not 2:
                     check3 = False
                 if len(checkSplit[1]) is not 3:
@@ -74,8 +86,11 @@ def main():
                 print("\nPlease enter the Serial Number in the proper YY-XXX format\n")
                 del serialN[x][0]
 
+            except NumberError as e:
+                print("That serial number was already entered. Please enter the correct serial number.")
+
     #Figure out which tests the system passed and failed
-    print("Use the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber\n2 - Vibration\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
+    print("\nUse the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber\n2 - Vibration\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
 
     for x in range(0,len(serialN)):
         loop3 = True
@@ -84,24 +99,28 @@ def main():
                 passedTests = str(input("\nWhich tests did "+ serialN[x][0] + " Pass? If updating failure, input 0\n"))
 
                 if passedTests == "0":
-                    try:
-                        failedTest = int(input("Which test did "+ serialN[x][0] + " fail?\n"))
+                    loop4 = True
+                    while loop4:
+                        try:
+                            failedTest = int(input("Which test did "+ serialN[x][0] + " fail?\n"))
 
-                        #ensure no number greater than the largest corresponding test was entered
-                        if failedTest > 4:
-                            raise NumberError
+                            #ensure no number greater than the largest corresponding test was entered
+                            if failedTest > 4:
+                                raise NumberError
 
-                    except ValueError as e:
-                        print("\nPlease input an integer")
-                    except NumberError as e:
-                        print("\nPlease input a correct integer corresponding to a test")
+                            loop4 = False
+
+                        except ValueError as e:
+                            print("\nPlease input an integer")
+                        except NumberError as e:
+                            print("\nPlease input a correct integer corresponding to a test")
                     #Append the list to account for test results
                     for k in range(1,5):
                         if k is failedTest:
                             serialN[x].append(0)
                         else:
                             serialN[x].append("")
-                    pass
+
 
                 else:
                     passedTestList = passedTests.split(",")
