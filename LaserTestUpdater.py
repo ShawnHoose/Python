@@ -5,6 +5,7 @@
 from photonicsfolders2 import FindLaserDataFolder
 import shutil
 import csv
+import sys
 import os
 from datetime import datetime
 
@@ -23,7 +24,9 @@ def main():
     date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
     #Get model names from file to compare to
-    modelFile = open("modelList.txt","r")
+    serverPath = "\\\PHOTONIX04\Quality Control\QC\\Updated Python Executables"
+    modelPath = os.path.join(serverPath, "modelList.txt")
+    modelFile = open(modelPath,"r")
     modelList = modelFile.read().splitlines()
 
     loop = True
@@ -200,7 +203,7 @@ def main():
         print("\nSuccess! The file has been saved to your desktop as " + fileName + "\n")
     print("Press Enter to exit this program...")
     input()
-    exit()
+    sys.exit()
 
 if __name__ == "__main__":
     main()
