@@ -22,6 +22,10 @@ def main():
     dt = datetime.now().date()
     date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
+    #Get model names from file to compare to
+    modelFile = open("modelList.txt","r")
+    modelList = modelFile.read().splitlines()
+
     loop = True
     while loop:
         try:
@@ -99,7 +103,7 @@ def main():
                 print("That serial number was already entered. Please enter the correct serial number.")
 
     #Figure out which tests the system passed and failed
-    print("\nUse the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber\n2 - Vibration\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
+    print("\nUse the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber       5 - Final Test Report\n2 - Vibration     6 - Outgoing Inspection\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
 
     for x in range(0,len(serialN)):
         loop3 = True
@@ -114,7 +118,7 @@ def main():
                             failedTest = int(input("Which test did "+ serialN[x][0] + " fail?\n"))
 
                             #ensure no number greater than the largest corresponding test was entered
-                            if failedTest > 4:
+                            if failedTest > 6:
                                 raise NumberError
 
                             loop4 = False
@@ -124,7 +128,7 @@ def main():
                         except NumberError as e:
                             print("\nPlease input a correct integer corresponding to a test")
                     #Append the list to account for test results
-                    for k in range(1,5):
+                    for k in range(1,7):
                         if k is failedTest:
                             serialN[x].append(0)
                         else:
@@ -137,7 +141,7 @@ def main():
                     for i in passedTestList:
                         check5 = type(int(i)) is int
 
-                        if int(i) > 4:
+                        if int(i) > 6:
                             raise NumberError
 
                     if not check5:
@@ -146,19 +150,35 @@ def main():
 
 
                     #Denote that the specific tests passed or haven't been tested
-                    for j in range(1,5):
+                    for j in range(1,7):
                         if str(j) in passedTestList:
                             serialN[x].append(1)
                         else:
                             serialN[x].append("")
 
-                #obtains model type
+                #Checks if model is in list, obtains if it isn't
                 checkSplit = serialN[x][0].split("-")
                 folderPath = FindLaserDataFolder(checkSplit[0],serialN[x][0])
                 serialized = folderPath.split("\\")[-1]
-                model = serialized.split(" ")[1]
-                #appends model to end of appropriate list
-                serialN[x].append(model)
+
+                splitSerial = serialized.split(" ")
+
+                #Corrects model name if space between name and 'SP'
+                print(splitSerial)
+
+                if len(splitSerial) > 2:
+                    if splitSerial[2] == "SP":
+                        splitSerial[1] = ''.join(splitSerial[1:3])
+                        print(splitSerial)
+
+                model = splitSerial[1]
+                #appends model and date to end of appropriate list
+                if model in modelList:
+                    serialN[x].append(model)
+                else:
+                    newModel = input("The model name detected does not match our list...Please input the correct model name. ")
+                    serialN[x].append(newModel)
+                modelFile.close() #Close the modelList file
                 serialN[x].append(date)
                 loop3 = False
 
