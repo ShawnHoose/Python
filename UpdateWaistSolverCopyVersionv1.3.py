@@ -1,7 +1,4 @@
 #!/usr/bin/python
-#Author: Ouutong Phooprasert
-#Created: 6/8/2017
-#Updated: 10/1/2018 (Hoose)
 
 ######## Relevant Libraries ##############
 import sys                               #
@@ -10,14 +7,14 @@ import subprocess                        #
 import shutil                            #
 from shutil import copy                  #
 from datetime import datetime, timedelta #
-from photonicsfolders2 import *          #
+*REMOVED*         #
 ##########################################
 
 
 def main():
-    AutoUpdate("\\\PHOTONIX04\Quality Control\QC\\Updated Python Executables", os.path.basename(__file__))
-    path = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Waist Solvers"
-    path2Old = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Waist Solvers\Old"
+    *REMOVED*
+    *REMOVED*
+    *REMOVED*
     date = datetime.now()
     files = ListFolderDirectory(path)
     timeCheckFiles = []
