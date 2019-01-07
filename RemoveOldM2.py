@@ -6,7 +6,7 @@
 import sys, os
 from os import listdir
 from os.path import isfile, join
-from photonicsfolders2 import *
+*REMOVED*
 ####################
 
 #This program will scan through the entire year folder and remove all the old M2 data files
