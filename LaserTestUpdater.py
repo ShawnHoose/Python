@@ -164,12 +164,9 @@ def main():
                 splitSerial = serialized.split(" ")
 
                 #Corrects model name if space between name and 'SP'
-                print(splitSerial)
-
                 if len(splitSerial) > 2:
                     if splitSerial[2] == "SP":
                         splitSerial[1] = ''.join(splitSerial[1:3])
-                        print(splitSerial)
 
                 model = splitSerial[1]
                 #appends model and date to end of appropriate list
