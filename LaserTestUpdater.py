@@ -2,7 +2,7 @@
 
 
 ### Imports ###
-from photonicsfolders2 import FindLaserDataFolder
+*REMOVED*
 import shutil
 import csv
 import sys
@@ -24,7 +24,11 @@ def main():
     date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
     #Get model names from file to compare to
+<<<<<<< HEAD
     serverPath = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Import for laser status"
+=======
+    serverPath = *REMOVED*
+>>>>>>> 03faf8ad0ce03af55285f5304a0741399acabdb7
     modelPath = os.path.join(serverPath, "modelList.txt")
     modelFile = open(modelPath,"r")
     modelList = modelFile.read().splitlines()
