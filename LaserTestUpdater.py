@@ -19,12 +19,12 @@ class NumberError(Error):
     pass
 
 def main():
-    desktopPath = os.path.join(os.environ["HOMEPATH"],'Desktop')
+    savePath = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Import for laser status\CSV"
     dt = datetime.now().date()
     date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
     #Get model names from file to compare to
-    serverPath = "\\\PHOTONIX04\Quality Control\QC\\Updated Python Executables"
+    serverPath = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Import for laser status"
     modelPath = os.path.join(serverPath, "modelList.txt")
     modelFile = open(modelPath,"r")
     modelList = modelFile.read().splitlines()
@@ -193,14 +193,15 @@ def main():
 
 
     fileName = str(date) + ".csv"
-    filePath = os.path.join(desktopPath, fileName)
+    filePath = os.path.join(savePath, fileName)
 
     with open(filePath,'w', newline='') as file:
         wr = csv.writer(file, quoting=csv.QUOTE_ALL)
         for x in range(0,len(serialN)):
             wr.writerow(serialN[x])
 
-        print("\nSuccess! The file has been saved to your desktop as " + fileName + "\n")
+        print("\nSuccess! The file has been saved to the CSV folder as " + fileName + "\n")
+        
     print("Press Enter to exit this program...")
     input()
     sys.exit()
