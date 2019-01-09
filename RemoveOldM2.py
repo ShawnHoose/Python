@@ -11,10 +11,10 @@ from os.path import isfile, join
 
 #This program will scan through the entire year folder and remove all the old M2 data files
 def main():
-    #AutoUpdate("\\\PHOTONIX04\Quality Control\QC\\Updated Python Executables", os.path.basename(__file__)) #Ensures latest version
+    #AutoUpdate(*REMOVED PATH*, os.path.basename(__file__)) #Ensures latest version
     fileTypes = ['m2-scor-data','bsqData'] #file extension types to delete
     safety = True #Check variable for safety loop
-    #filePath = "\\PHOTONIX04\Laser Data and Test Reports\Test Reports (by Year)\\"
+    #filePath = *REMOVED*
     filePath = "\\Users\shoose\Desktop\Python Projects\DeleteTestFolder"
     while safety == True: #Safety loop to make sure you delete the right year
         year = askYear() #Get the year
