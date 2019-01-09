@@ -28,19 +28,6 @@ def main():
     fileName = str(date) + ".csv"
     filePath = os.path.join(savePath, fileName)
 
-    #Allow for multiple save files for same day, ammends integer to end of file
-    for file in fileList:
-        split = file.split(" ")[-1].split(".")
-        try:
-            if fileName in fileList:
-                fileName = str(date) + " 1.csv"
-                filePath = filePath = os.path.join(savePath, fileName)
-            if (type(int(split[0])) is int):
-                fileName = str(date) + " " + str(int(split[0]) + 1) + ".csv"
-                filePath = filePath = os.path.join(savePath, fileName)
-        except ValueError as e:
-            continue
-
     #Get model names from file to compare to
     serverPath = *REMOVED*
     modelPath = os.path.join(serverPath, "modelList.txt")
@@ -209,12 +196,22 @@ def main():
             except LengthError as e:
                 print("\nToo many tests have been indicated, please correct")
 
-    with open(filePath,'w', newline='') as file:
-        wr = csv.writer(file, quoting=csv.QUOTE_ALL)
-        for x in range(0,len(serialN)):
-            wr.writerow(serialN[x])
+    #If file already exists, append data to end, otherwise create file
+    if fileName in fileList:
+        with open(filePath,'a', newline='') as file:
+            wr = csv.writer(file, quoting=csv.QUOTE_ALL)
+            for x in range(0,len(serialN)):
+                wr.writerow(serialN[x])
 
-        print("\nSuccess! The file has been saved to the CSV folder as " + fileName + "\n")
+            print("\nSuccess! The CSV file " + fileName + " has been appended\n")
+
+    else:
+        with open(filePath,'w', newline='') as file:
+            wr = csv.writer(file, quoting=csv.QUOTE_ALL)
+            for x in range(0,len(serialN)):
+                wr.writerow(serialN[x])
+
+            print("\nSuccess! The file has been saved to the CSV folder as " + fileName + "\n")
 
     print("Press Enter to exit this program...")
     input()
