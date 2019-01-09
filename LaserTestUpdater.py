@@ -2,7 +2,7 @@
 
 
 ### Imports ###
-*REMOVED*
+from photonicsfolders2 import FindLaserDataFolder
 import shutil
 import csv
 import sys
@@ -19,16 +19,30 @@ class NumberError(Error):
     pass
 
 def main():
-    savePath = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Import for laser status\CSV"
+    savePath = *REMOVED*
     dt = datetime.now().date()
     date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
+    fileList = [f for f in os.listdir(savePath) if os.path.isfile(os.path.join(savePath, f))]
+
+    fileName = str(date) + ".csv"
+    filePath = os.path.join(savePath, fileName)
+
+    #Allow for multiple save files for same day, ammends integer to end of file
+    for file in fileList:
+        split = file.split(" ")[-1].split(".")
+        try:
+            if fileName in fileList:
+                fileName = str(date) + " 1.csv"
+                filePath = filePath = os.path.join(savePath, fileName)
+            if (type(int(split[0])) is int):
+                fileName = str(date) + " " + str(int(split[0]) + 1) + ".csv"
+                filePath = filePath = os.path.join(savePath, fileName)
+        except ValueError as e:
+            continue
+
     #Get model names from file to compare to
-<<<<<<< HEAD
-    serverPath = "\\\PHOTONIX04\Quality Control\QC\Spreadsheets, Forms & Information\Import for laser status"
-=======
     serverPath = *REMOVED*
->>>>>>> 03faf8ad0ce03af55285f5304a0741399acabdb7
     modelPath = os.path.join(serverPath, "modelList.txt")
     modelFile = open(modelPath,"r")
     modelList = modelFile.read().splitlines()
@@ -110,7 +124,7 @@ def main():
                 print("That serial number was already entered. Please enter the correct serial number.")
 
     #Figure out which tests the system passed and failed
-    print("\nUse the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber       5 - Final Test Report\n2 - Vibration     6 - Outgoing Inspection\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
+    print("\nUse the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber\n2 - Vibration\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
 
     for x in range(0,len(serialN)):
         loop3 = True
@@ -125,7 +139,7 @@ def main():
                             failedTest = int(input("Which test did "+ serialN[x][0] + " fail?\n"))
 
                             #ensure no number greater than the largest corresponding test was entered
-                            if failedTest > 6:
+                            if failedTest > 4:
                                 raise NumberError
 
                             loop4 = False
@@ -135,7 +149,7 @@ def main():
                         except NumberError as e:
                             print("\nPlease input a correct integer corresponding to a test")
                     #Append the list to account for test results
-                    for k in range(1,7):
+                    for k in range(1,5):
                         if k is failedTest:
                             serialN[x].append(0)
                         else:
@@ -148,7 +162,7 @@ def main():
                     for i in passedTestList:
                         check5 = type(int(i)) is int
 
-                        if int(i) > 6:
+                        if int(i) > 4:
                             raise NumberError
 
                     if not check5:
@@ -157,7 +171,7 @@ def main():
 
 
                     #Denote that the specific tests passed or haven't been tested
-                    for j in range(1,7):
+                    for j in range(1,5):
                         if str(j) in passedTestList:
                             serialN[x].append(1)
                         else:
@@ -195,17 +209,13 @@ def main():
             except LengthError as e:
                 print("\nToo many tests have been indicated, please correct")
 
-
-    fileName = str(date) + ".csv"
-    filePath = os.path.join(savePath, fileName)
-
     with open(filePath,'w', newline='') as file:
         wr = csv.writer(file, quoting=csv.QUOTE_ALL)
         for x in range(0,len(serialN)):
             wr.writerow(serialN[x])
 
         print("\nSuccess! The file has been saved to the CSV folder as " + fileName + "\n")
-        
+
     print("Press Enter to exit this program...")
     input()
     sys.exit()
