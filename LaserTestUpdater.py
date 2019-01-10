@@ -18,10 +18,45 @@ class LengthError(Error):
 class NumberError(Error):
     pass
 
+class DateError(Error):
+    pass
+
 def main():
     savePath = *REMOVED*
     dt = datetime.now().date()
-    date = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
+    todayDate = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
+
+    #Gather date for data entry
+    dateLoop = True
+    while dateLoop:
+        try:
+            date = input("What date would you like to enter data for? (MM-DD-YY) ")
+            #Ensure date formatting is correct and only contains ints
+            if (len(date) is not 8):
+                raise DateError
+            if ((date[2] is not "-") or (date[5] is not "-")):
+                raise DateError
+
+            #Check to see if date only contains integers between the hyphens
+            index = 0
+            while index < 7:
+                intCheck = type(int(date[index:index + 2])) is int
+                index += 3
+
+            #Check if date is within 30 days, raise error if not
+            if (abs(datetime.strptime(date, "%m-%d-%y")-datetime.strptime(todayDate, "%m-%d-%y")).days) > 30:
+                raise LengthError
+
+            dateLoop = False
+
+        except DateError as e:
+            print("Incorrect date format. Please use the provided format.\n")
+
+        except ValueError as e:
+            print("Your date can only contain integer values or it must be a real date. Please correct. \n")
+
+        except LengthError as e:
+            print("Please enter a date within 30 days of today's date\n")
 
     fileList = [f for f in os.listdir(savePath) if os.path.isfile(os.path.join(savePath, f))]
 
@@ -48,7 +83,6 @@ def main():
 
         except NumberError as e:
             print("Enter a value greater than 0")
-
 
     #Get all serial numbers of the systems
     for x in range(0,laserNum):
@@ -142,7 +176,6 @@ def main():
                         else:
                             serialN[x].append("")
 
-
                 else:
                     passedTestList = passedTests.split(",")
 
@@ -154,8 +187,6 @@ def main():
 
                     if not check5:
                         raise ValueError
-
-
 
                     #Denote that the specific tests passed or haven't been tested
                     for j in range(1,5):
