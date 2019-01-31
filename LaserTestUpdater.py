@@ -2,7 +2,7 @@
 
 
 ### Imports ###
-from photonicsfolders2 import FindLaserDataFolder
+from *REMOVED*
 import shutil
 import csv
 import sys
@@ -145,7 +145,7 @@ def main():
                 print("That serial number was already entered. Please enter the correct serial number.")
 
     #Figure out which tests the system passed and failed
-    print("\nUse the below numbers to indicate the tests that you want to enter information for:\n1 - Chamber\n2 - Vibration\n3 - LTT\n4 - Shock\n\nYou may enter multiple tests separated by a comma.")
+    print("*REMOVED*")
 
     for x in range(0,len(serialN)):
         loop3 = True
