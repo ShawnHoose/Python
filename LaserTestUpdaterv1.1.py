@@ -1,8 +1,11 @@
 #!usr/bin/python
-
+#Author: Shawn Hoose
+#Created: 1/4/19
+#Updated: 2/8/19
 
 ### Imports ###
-from *REMOVED*
+from photonicsfolders2 import FindLaserDataFolder
+from photonicsfolders2 import AutoUpdate
 import shutil
 import csv
 import sys
@@ -21,8 +24,12 @@ class NumberError(Error):
 class DateError(Error):
     pass
 
+class TimeError(Error):
+    pass
+
 def main():
-    savePath = *REMOVED*
+    AutoUpdate("*REMOVED*"", os.path.basename(__file__))
+    savePath = "*REMOVED*"
     dt = datetime.now().date()
     todayDate = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
@@ -30,24 +37,23 @@ def main():
     dateLoop = True
     while dateLoop:
         try:
-            date = input("What date would you like to enter data for? (MM-DD-YY) ")
+            date = input("\nWhat date would you like to enter data for? (MM-DD-YY) ")
             #Ensure date formatting is correct and only contains ints
-            if (len(date) is not 8):
+            if (len(date) is not 8) or (date[2] is not "-") or (date[5] is not "-"):
                 raise DateError
-            if ((date[2] is not "-") or (date[5] is not "-")):
-                raise DateError
-
-            #Check to see if date only contains integers between the hyphens
-            index = 0
-            while index < 7:
-                intCheck = type(int(date[index:index + 2])) is int
-                index += 3
 
             #Check if date is within 30 days, raise error if not
             if (abs(datetime.strptime(date, "%m-%d-%y")-datetime.strptime(todayDate, "%m-%d-%y")).days) > 30:
                 raise LengthError
 
+            #Checks to make sure date isn't in the future
+            if (datetime.strptime(todayDate, "%m-%d-%y") - datetime.strptime(date, "%m-%d-%y")).days < 0:
+                raise TimeError
+
             dateLoop = False
+
+        except TimeError as e:
+            print("You cannot enter data for a date which has not yet happened. \n")
 
         except DateError as e:
             print("Incorrect date format. Please use the provided format.\n")
@@ -64,8 +70,7 @@ def main():
     filePath = os.path.join(savePath, fileName)
 
     #Get model names from file to compare to
-    serverPath = *REMOVED*
-    modelPath = os.path.join(serverPath, "modelList.txt")
+    modelPath = "*REMOVED*"
     modelFile = open(modelPath,"r")
     modelList = modelFile.read().splitlines()
 
@@ -73,9 +78,9 @@ def main():
     while loop:
         try:
             laserNum = int(input("\nHow many lasers would you like to give data for? "))
-            if laserNum is 0:
+            if laserNum < 1:
                 raise NumberError
-            serialN = [[] for x in range(0,laserNum)]
+            serialN = [[] for x in range(laserNum)]
             loop = False
 
         except ValueError as e:
@@ -85,7 +90,7 @@ def main():
             print("Enter a value greater than 0")
 
     #Get all serial numbers of the systems
-    for x in range(0,laserNum):
+    for x in range(laserNum):
         loop2 = True
         while loop2:
             try:
@@ -94,19 +99,19 @@ def main():
                     serialN[x].append(SN)
                 elif x == 1:
                     SN = str(input("\n2nd Serial Number: "))
-                    for j in range(0,len(serialN)):
+                    for j in range(len(serialN)):
                         if str(SN) in serialN[j]:
                             raise NumberError
                     serialN[x].append(SN)
                 elif x == 2:
                     SN = str(input("\n3rd Serial Number: "))
-                    for j in range(0,len(serialN)):
+                    for j in range(len(serialN)):
                         if str(SN) in serialN[j]:
                             raise NumberError
                     serialN[x].append(SN)
                 else:
                     SN = str(input("\n" + str(x+1) +"th Serial Number: "))
-                    for j in range(0,len(serialN)):
+                    for j in range(len(serialN)):
                         if str(SN) in serialN[j]:
                             raise NumberError
                     serialN[x].append(SN)
@@ -147,7 +152,7 @@ def main():
     #Figure out which tests the system passed and failed
     print("*REMOVED*")
 
-    for x in range(0,len(serialN)):
+    for x in range(len(serialN)):
         loop3 = True
         while loop3:
             try:
@@ -160,7 +165,7 @@ def main():
                             failedTest = int(input("Which test did "+ serialN[x][0] + " fail?\n"))
 
                             #ensure no number greater than the largest corresponding test was entered
-                            if failedTest > 4:
+                            if int(failedTest) > 4:
                                 raise NumberError
 
                             loop4 = False
@@ -207,13 +212,20 @@ def main():
                     if splitSerial[2] == "SP":
                         splitSerial[1] = ''.join(splitSerial[1:3])
 
-                model = splitSerial[1]
+                if len(splitSerial) is 1:
+                    model = input("The model name detected does not match our list...Please input the correct model name. ")
+                else:
+                    model = splitSerial[1]
+
                 #appends model and date to end of appropriate list
                 if model in modelList:
+                    serialN[x].append(model)
+                elif len(splitSerial) is 1:
                     serialN[x].append(model)
                 else:
                     newModel = input("The model name detected does not match our list...Please input the correct model name. ")
                     serialN[x].append(newModel)
+
                 modelFile.close() #Close the modelList file
                 serialN[x].append(date)
                 loop3 = False
@@ -231,7 +243,7 @@ def main():
     if fileName in fileList:
         with open(filePath,'a', newline='') as file:
             wr = csv.writer(file, quoting=csv.QUOTE_ALL)
-            for x in range(0,len(serialN)):
+            for x in range(len(serialN)):
                 wr.writerow(serialN[x])
 
             print("\nSuccess! The CSV file " + fileName + " has been appended\n")
@@ -239,7 +251,7 @@ def main():
     else:
         with open(filePath,'w', newline='') as file:
             wr = csv.writer(file, quoting=csv.QUOTE_ALL)
-            for x in range(0,len(serialN)):
+            for x in range(len(serialN)):
                 wr.writerow(serialN[x])
 
             print("\nSuccess! The file has been saved to the CSV folder as " + fileName + "\n")
