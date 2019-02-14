@@ -1,4 +1,7 @@
 #!/usr/bin/python
+#Author: Ouutong Phooprasert
+#Created: 6/8/2017
+#Updated: 1/28/19 (Hoose)
 
 ######## Relevant Libraries ##############
 import sys                               #
@@ -7,20 +10,20 @@ import subprocess                        #
 import shutil                            #
 from shutil import copy                  #
 from datetime import datetime, timedelta #
-*REMOVED*         #
+from photonicsfolders2 import *          #
 ##########################################
 
 
 def main():
-    *REMOVED*
-    *REMOVED*
-    *REMOVED*
+    AutoUpdate("*REMOVED*", os.path.basename(__file__))
+    path = "*REMOVED*"
+    path2Old = "*REMOVED*"
     date = datetime.now()
     files = ListFolderDirectory(path)
     timeCheckFiles = []
     timeCheckFTime = []
     for i in range(0, len(files)):
-        rfileTemp = re.findall("WaistSolver ", files[i])
+        rfileTemp = re.findall("*REMOVED*", files[i])
         try:
             rFileName2 = rfileTemp[0].strip()
             rFileName = files[i]
@@ -32,21 +35,18 @@ def main():
             pass
     if len(timeCheckFiles) == 1:
         print("Found File: " + rFileName)
-        nFileName = "WaistSolverCopyVersion.xls"
-        mPath = os.path.join(path2Old, rFileName) #UD Path - OLD
+        nFileName = "*REMOVED*"
         rPath = os.path.join(path2Old, nFileName) #CopyVersion Path - OLD
         oPath = os.path.join(path, rFileName) #UD Path
-        oNPath = os.path.join(path,nFileName) #CopyVersion Path
         if rPath:
             try:
                 os.remove(rPath)
             except FileNotFoundError as e:
-                pass
-        copy(oPath, path2Old) #Places copy of UD into Old Folder
-        os.rename(mPath, rPath) #Renames UD in old folder to "WaistSolverCopyVersion"
-        os.remove(oNPath) #Removes CopyVersion from parent folder
-        copy(rPath, path) #copies CopyVersion from Old into parent folder
-        os.rename(rPath, mPath) #renames CopyVersion in old folder to original name
+                print("\nDid not find " + rPath + ". Continuing without.\n")
+
+        #Copies WaistSolver into Old folder and creates a copy
+        copy(oPath, path2Old)
+        copy(oPath, os.path.join(path, "*REMOVED*"))
         print("Run Successful!")
         print("press enter to exit...")
         input()
@@ -55,24 +55,23 @@ def main():
     else:
         rFileName = timeCheckFiles[timeCheckFTime.index(min(timeCheckFTime))]
         print("Found File: " + rFileName)
-        nFileName = "WaistSolverCopyVersion.xls"
-        mPath = os.path.join(path2Old, rFileName)
+        nFileName = "*REMOVED*"
         rPath = os.path.join(path2Old, nFileName)
         oPath = os.path.join(path, rFileName)
-        oNPath = os.path.join(path,nFileName)
         if rPath:
             try:
                 os.remove(rPath)
             except FileNotFoundError as e:
-                pass
+                print("\nDid not find " + rPath + ". Continuing without.\n")
+
+        #Copies WaistSolver into Old folder and creates a copy
         copy(oPath, path2Old)
-        os.rename(mPath, rPath)
-        os.remove(oNPath)
-        copy(rPath, path)
-        os.rename(rPath, mPath)
+        copy(oPath, os.path.join(path, "*REMOVED*"))
+
         print("Run Successful!")
         print("press enter to exit...")
         input()
         exit()
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
