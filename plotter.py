@@ -33,7 +33,7 @@ class PlotWindow:
         self.window.set_title("Autoplot")
         self.window.show()
 
-        
+
         topframe = gtk.VBox()
         highframe = gtk.Frame()
         lowframe = gtk.Frame()
@@ -44,7 +44,7 @@ class PlotWindow:
         topframe.add(highframe)
         topframe.add(lowframe)
         highframe.add(table)
-        
+
         filebutton = gtk.Button("Choose files")
         table.attach(filebutton,1,2,0,1)
         filebutton.show()
@@ -57,17 +57,17 @@ class PlotWindow:
             response = dialog.run()
             if response == gtk.RESPONSE_OK:
                     filelist = dialog.get_filenames()
-                    print '\n%s files have been selected\n%s'%(len(filelist),filelist)
+                    print ('\n%s files have been selected\n%s'%(len(filelist),filelist))
                     dialog.destroy()
             elif response == gtk.RESPONSE_CANCEL:
-                    print 'Closed, no files selected'
+                    print ('Closed, no files selected')
                     dialog.destroy()
-        
-        filebutton.connect('clicked',get_files)        
-        
+
+        filebutton.connect('clicked',get_files)
+
         title= gtk.Label("Graph Title:")
-        title_entry = gtk.Entry()        
-        title_entry.set_activates_default(True)        
+        title_entry = gtk.Entry()
+        title_entry.set_activates_default(True)
         table.attach(title,0,1,1,2)
         table.attach(title_entry,1,2,1,2)
 
@@ -91,7 +91,7 @@ class PlotWindow:
         title_entry.show()
         title.show()
         saveas.show()
-        
+
         plot = gtk.Button("Plot")
         table.attach(plot,0,1,3,4)
         plot.show()
@@ -116,7 +116,7 @@ class PlotWindow:
             i=0
             k=0
 
-            
+
             for name in filelist:
                 datafile=open(name,'r')
                 totalfile=datafile.read().splitlines()
@@ -130,7 +130,7 @@ class PlotWindow:
                                 totalout[i][1]=float(split[1])
                             elif split[0].find("_Read") !=-1:
                                 totalout[i][2]=float(split[1])
-                        j+=1    
+                        j+=1
                 else:
                     data=totalfile[-1].split(',')
                     totalout[i][1]=float(data[10])
@@ -141,10 +141,10 @@ class PlotWindow:
                 i+=1
                 datafile.close()
 
-                
+
             ind = 0.25 + np.arange(len(filelist))
             wid = 0.40
-            
+
             ax = PlotWindow.ax
 
             if mbs.get_active():
@@ -162,7 +162,7 @@ class PlotWindow:
                 totmax = amax
             else:
                 totmax = bmax
-    
+
             rects1 = ax.bar(ind,readvals, wid, color='r', alpha=0.7)
             rects2 = ax.bar(ind+wid, writevals, wid, color='b', alpha=0.7)
             ax.set_xticks(ind+wid)
@@ -196,20 +196,20 @@ class PlotWindow:
 
             print ('\nsaving plot as %s.png'%(saveas_entry.get_text()))
             plt.savefig('%s.png'%(saveas_entry.get_text()), bbox_inches ='tight')
-        
-            
+
+
 
         plot.connect("clicked",plotPress)
         title_entry.connect("activate",plotPress)
         saveas_entry.connect("activate",plotPress)
-        
+
         topframe.show()
         highframe.show()
         lowframe.show()
-        
+
         self.window.connect("delete-event",gtk.main_quit)
         self.window.show()
-        
+
 
 def main():
     gtk.main()
@@ -218,9 +218,3 @@ def main():
 if __name__=="__main__":
     window = PlotWindow()
     main()
-
-
-
-
-    
-
