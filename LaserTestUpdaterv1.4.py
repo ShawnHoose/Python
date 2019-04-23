@@ -1,11 +1,11 @@
 #!usr/bin/python
 #Author: Shawn Hoose
 #Created: 1/4/19
-#Updated: 3/15/19
+#Updated: 4/23/19
 
 ### Imports ###
-from photonicsfolders2 import FindLaserDataFolder
-from photonicsfolders2 import AutoUpdate
+*REMOVED*
+*REMOVED*
 import shutil
 import csv
 import sys
@@ -28,8 +28,8 @@ class TimeError(Error):
     pass
 
 def main():
-    AutoUpdate(*REMOVED*, os.path.basename(__file__))
-    savePath = *REMOVED*
+    AutoUpdate("*REMOVED*", os.path.basename(__file__))
+    savePath = "*REMOVED*"
     dt = datetime.now().date()
     todayDate = '{0}-{1}-{2:02}'.format(dt.month, dt.day, dt.year % 100)
 
@@ -73,9 +73,12 @@ def main():
         filePath = os.path.join(savePath, fileName)
 
         #Get model names from file to compare to
-        modelPath = *REMOVED*
+        modelPath = "*REMOVED*"
         modelFile = open(modelPath,"r")
-        modelList = modelFile.read().splitlines()
+        #removes new line character from entries
+        modelList = set(line[:-1] for line in modelFile)
+
+        serialN = {}
 
         loop = True
         while loop:
@@ -83,7 +86,6 @@ def main():
                 laserNum = int(input("\nHow many lasers would you like to give data for? "))
                 if laserNum < 1:
                     raise NumberError
-                serialN = [[] for x in range(laserNum)]
                 loop = False
 
             except ValueError as e:
@@ -99,28 +101,25 @@ def main():
                 try:
                     if x == 0:
                         SN = str(input("\n1st Serial Number: "))
-                        serialN[x].append(SN)
+                        serialN[SN] = None
                     elif x == 1:
                         SN = str(input("\n2nd Serial Number: "))
-                        for j in range(len(serialN)):
-                            if str(SN) in serialN[j]:
-                                raise NumberError
-                        serialN[x].append(SN)
+                        if SN in serialN:
+                            raise NumberError
+                        serialN[SN] = None
                     elif x == 2:
                         SN = str(input("\n3rd Serial Number: "))
-                        for j in range(len(serialN)):
-                            if str(SN) in serialN[j]:
-                                raise NumberError
-                        serialN[x].append(SN)
+                        if SN in serialN:
+                            raise NumberError
+                        serialN[SN] = None
                     else:
                         SN = str(input("\n" + str(x+1) +"th Serial Number: "))
-                        for j in range(len(serialN)):
-                            if str(SN) in serialN[j]:
-                                raise NumberError
-                        serialN[x].append(SN)
+                        if SN in serialN:
+                            raise NumberError
+                        serialN[SN] = None
 
 
-                    checkSplit = serialN[x][0].split("-")
+                    checkSplit = SN.split("-")
                     #check to ensure Serial Number is in correct format
                     check = type(int(checkSplit[0])) is int
                     check2 = type(int(checkSplit[1])) is int
@@ -143,29 +142,35 @@ def main():
 
                 except ValueError as e:
                     print("\nPlease input an integer value\n")
-                    del serialN[x][0]
+                    if SN in serialN:
+                        serialN.pop(SN, None)
 
                 except IndexError as e:
                     print("\nPlease enter the Serial Number in the proper YY-XXX format\n")
-                    del serialN[x][0]
+                    if SN in serialN:
+                        serialN.pop(SN, None)
 
                 except NumberError as e:
-                    print("That serial number was already entered. Please enter the correct serial number.")
+                    print("\nThat serial number was already entered. Please enter the correct serial number.")
 
         #Figure out which tests the system passed and failed
-        print(*REMOVED*)
+        print("*REMOVED*")
+
+        keys = list(key for key in serialN.keys())
 
         for x in range(len(serialN)):
             loop3 = True
+
+
             while loop3:
                 try:
-                    passedTests = str(input("\nWhich tests did "+ serialN[x][0] + " Pass? If updating failure, input 0\n"))
+                    passedTests = str(input("\nWhich tests did "+ keys[x] + " Pass? If updating failure, input 0\n"))
 
                     if passedTests == "0":
                         loop4 = True
                         while loop4:
                             try:
-                                failedTest = int(input("Which test did "+ serialN[x][0] + " fail?\n"))
+                                failedTest = int(input("Which test did "+ keys[x] + " fail?\n"))
 
                                 #ensure no number greater than the largest corresponding test was entered
                                 if int(failedTest) > 4:
@@ -178,12 +183,13 @@ def main():
                             except NumberError as e:
                                 print("\nPlease input a correct integer corresponding to a test")
                         #Append the list to account for test results
+                        data = []
                         for k in range(1,5):
                             if k is failedTest:
-                                serialN[x].append(0)
+                                data.append(0)
                             else:
-                                serialN[x].append("")
-
+                                data.append("")
+                        serialN[keys[x]] = data
                     else:
                         passedTestList = passedTests.split(",")
 
@@ -197,15 +203,17 @@ def main():
                             raise ValueError
 
                         #Denote that the specific tests passed or haven't been tested
+                        data = []
                         for j in range(1,5):
                             if str(j) in passedTestList:
-                                serialN[x].append(1)
+                                data.append(1)
                             else:
-                                serialN[x].append("")
+                                data.append("")
+                        serialN[keys[x]] = data
 
                     #Checks if model is in list, obtains if it isn't
-                    checkSplit = serialN[x][0].split("-")
-                    folderPath = FindLaserDataFolder(checkSplit[0],serialN[x][0])
+                    checkSplit = keys[x].split("-")
+                    folderPath = FindLaserDataFolder(checkSplit[0],keys[x])
                     serialized = folderPath.split("\\")[-1]
 
                     splitSerial = serialized.split(" ")
@@ -222,15 +230,15 @@ def main():
 
                     #appends model and date to end of appropriate list
                     if model in modelList:
-                        serialN[x].append(model)
+                        data.append(model)
                     elif len(splitSerial) is 1:
-                        serialN[x].append(model)
+                        data.append(model)
                     else:
                         newModel = input("The model name detected does not match our list...Please input the correct model name. ")
-                        serialN[x].append(newModel)
+                        data.append(newModel)
 
                     modelFile.close() #Close the modelList file
-                    serialN[x].append(date)
+                    data.append(date)
                     loop3 = False
 
                 except NumberError as e:
@@ -247,7 +255,9 @@ def main():
             with open(filePath,'a', newline='') as file:
                 wr = csv.writer(file, quoting=csv.QUOTE_ALL)
                 for x in range(len(serialN)):
-                    wr.writerow(serialN[x])
+                    output = [keys[x]]
+                    output += serialN[keys[x]]
+                    wr.writerow(output)
 
                 print("\nSuccess! The CSV file " + fileName + " has been appended\n")
 
@@ -255,7 +265,9 @@ def main():
             with open(filePath,'w', newline='') as file:
                 wr = csv.writer(file, quoting=csv.QUOTE_ALL)
                 for x in range(len(serialN)):
-                    wr.writerow(serialN[x])
+                    output = [keys[x]]
+                    output += serialN[keys[x]]
+                    wr.writerow(output)
 
                 print("\nSuccess! The file has been saved to the CSV folder as " + fileName + "\n")
 
