@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #Author: Shawn Hoose
 #Created: 10/12/2017
-#Updated: 10/12/2017
+#Updated: 6/24/2019
 
 ## Libraries ##
 import ctypes, sys
@@ -23,23 +23,18 @@ def is_admin(): #is_admin() from Martin De la Fuente / Eddie Parker on stackover
         return False
 
 def killandStart(killName): #Kills process and starts BeamGage
-    i = 0 #counter to see if we don't find the proper process
-    processes = list(psutil.process_iter()) #Creates list of running processes
-    for i in range(0, len(processes)):
-        for proc in processes:  #Loops through each looking for the right one, then kills it when it matches the name
-            if proc.name() == killName:
-                print('Found the process: ' + killName + " -- Killing it and starting BeamGage.")
-                proc.kill()
-                subprocess.call(['C:\Program Files\Spiricon\BeamGage Standard\Spiricon.Version5.exe']) #Opens BeamGage
-                sys.exit()
-                break
+    processes = {proc.name(): proc.pid for proc in psutil.process_iter()}
+    if killName in processes:
+        print('Found the process: ' + killName + " -- Killing it and starting BeamGage.")
+        proc = psutil.Process(processes[killName])
+        proc.kill()
+        subprocess.call(['C:\Program Files\Spiricon\BeamGage Standard\Spiricon.Version5.exe'])
+        sys.exit()
+    else:
+         print('Process: ' + killName + " was not found.")
+         print("Starting BeamGage")
+         subprocess.call(['C:\Program Files\Spiricon\BeamGage Standard\Spiricon.Version5.exe'])
+         sys.exit()
 
-        if (i == len(processes) - 1): # If it has gone through all the processes and did not find the right one, open BeamGage.
-            print('Process: ' + killName + " was not found.")
-            print("Starting BeamGage")
-            subprocess.call(['C:\Program Files\Spiricon\BeamGage Standard\Spiricon.Version5.exe']) #Opens BeamGage
-            sys.exit()
-
-
-
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    main()
