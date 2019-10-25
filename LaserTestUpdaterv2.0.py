@@ -1,11 +1,11 @@
 #!usr/bin/python
 #Author: Shawn Hoose
 #Created: 1/4/19
-#Updated: 4/23/19
+#Updated: 8/28/19
 
 ### Imports ###
-*REMOVED*
-*REMOVED*
+from photonicsfolders2 import FindLaserDataFolder
+from photonicsfolders2 import AutoUpdate
 import shutil
 import csv
 import sys
@@ -56,7 +56,7 @@ def main():
                 dateLoop = False
 
             except TimeError as e:
-                print("You cannot enter data for a date which has not yet happened. \n")
+                print("You cannot enter data for a date which has not yet happened, Marty. \n")
 
             except DateError as e:
                 print("Incorrect date format. Please use the provided format.\n")
@@ -75,7 +75,7 @@ def main():
         #Get model names from file to compare to
         modelPath = "*REMOVED*"
         modelFile = open(modelPath,"r")
-        #removes new line character from entries
+        #Creates Set of model names
         modelList = set(line[:-1] for line in modelFile)
 
         serialN = {}
@@ -160,8 +160,6 @@ def main():
 
         for x in range(len(serialN)):
             loop3 = True
-
-
             while loop3:
                 try:
                     passedTests = str(input("\nWhich tests did "+ keys[x] + " Pass? If updating failure, input 0\n"))
@@ -170,28 +168,44 @@ def main():
                         loop4 = True
                         while loop4:
                             try:
-                                failedTest = int(input("Which test did "+ keys[x] + " fail?\n"))
+                                failedTest = str(input("Which test(s) did "+ keys[x] + " fail?\n"))
+                                splitFail = failedTest.split(",")
 
-                                #ensure no number greater than the largest corresponding test was entered
-                                if int(failedTest) > 4:
-                                    raise NumberError
+                                if len(splitFail) > 4:
+                                    raise LengthError
+                                #Append the list to account for test results
+                                failedList = set(splitFail)
+                                for i in failedList:
+                                    check6 = type(int(i)) is int
 
+                                    if int(i) > 4:
+                                        raise NumberError
+
+                                    if not check6:
+                                        raise ValueError
+
+                                data = []
+                                for k in range(1,5):
+                                    if str(k) in failedList:
+                                        data.append(0)
+                                    else:
+                                        data.append("")
+                                serialN[keys[x]] = data
                                 loop4 = False
 
                             except ValueError as e:
                                 print("\nPlease input an integer")
                             except NumberError as e:
-                                print("\nPlease input a correct integer corresponding to a test")
-                        #Append the list to account for test results
-                        data = []
-                        for k in range(1,5):
-                            if k is failedTest:
-                                data.append(0)
-                            else:
-                                data.append("")
-                        serialN[keys[x]] = data
+                                print("\nPlease input a number corresponding to the tests according to the list above")
+                            except LengthError as e:
+                                print("\nToo many tests have been indicated, please correct")
                     else:
-                        passedTestList = passedTests.split(",")
+                        splitPass = passedTests.split(",")
+
+                        if len(splitPass) > 4:
+                            raise LengthError
+
+                        passedTestList = set(splitPass)
 
                         for i in passedTestList:
                             check5 = type(int(i)) is int
@@ -199,8 +213,8 @@ def main():
                             if int(i) > 4:
                                 raise NumberError
 
-                        if not check5:
-                            raise ValueError
+                            if not check5:
+                                raise ValueError
 
                         #Denote that the specific tests passed or haven't been tested
                         data = []
