@@ -15,7 +15,7 @@ from photonicsfolders2 import *          #
 
 
 def main():
-    AutoUpdate("*REMOVED*", os.path.basename(__file__))
+    AutoUpdate("*REMOVED*")
     path = "*REMOVED*"
     path2Old = "*REMOVED*"
     date = datetime.now()
@@ -23,7 +23,7 @@ def main():
     timeCheckFiles = []
     timeCheckFTime = []
     for i in range(0, len(files)):
-        rfileTemp = re.findall("*REMOVED*", files[i])
+        rfileTemp = re.findall("WaistSolver ", files[i])
         try:
             rFileName2 = rfileTemp[0].strip()
             rFileName = files[i]
@@ -35,7 +35,7 @@ def main():
             pass
     if len(timeCheckFiles) == 1:
         print("Found File: " + rFileName)
-        nFileName = "*REMOVED*"
+        nFileName = "WaistSolverCopyVersion.xls"
         rPath = os.path.join(path2Old, nFileName) #CopyVersion Path - OLD
         oPath = os.path.join(path, rFileName) #UD Path
         if rPath:
@@ -45,17 +45,31 @@ def main():
                 print("\nDid not find " + rPath + ". Continuing without.\n")
 
         #Copies WaistSolver into Old folder and creates a copy
-        copy(oPath, path2Old)
-        copy(oPath, os.path.join(path, "*REMOVED*"))
-        print("Run Successful!")
-        print("press enter to exit...")
-        input()
-        exit()
+        x = 1
+        while x == 1:
+            try:
+                copy(oPath, path2Old)
+                copy(oPath, os.path.join(path, "WaistSolverCopyVersion.xls"))
+                print("Run Successful!")
+                print("press enter to exit...")
+                input()
+                exit()
+            except PermissionError:
+                print("The file " + nFileName + " could not be opened. It is currently open elsewhere. Please close the file. \nPress 'e' to exit this program, or press any other button to try again.\n")
+
+                userInput = input()
+                if userInput is 'e':
+                    print("exiting program...")
+                    x = 2
+                    exit()
+                else:
+                    print("trying again...\n")
+
 
     else:
         rFileName = timeCheckFiles[timeCheckFTime.index(min(timeCheckFTime))]
         print("Found File: " + rFileName)
-        nFileName = "*REMOVED*"
+        nFileName = "WaistSolverCopyVersion.xls"
         rPath = os.path.join(path2Old, nFileName)
         oPath = os.path.join(path, rFileName)
         if rPath:
@@ -66,7 +80,7 @@ def main():
 
         #Copies WaistSolver into Old folder and creates a copy
         copy(oPath, path2Old)
-        copy(oPath, os.path.join(path, "*REMOVED*"))
+        copy(oPath, os.path.join(path, "WaistSolverCopyVersion.xls"))
 
         print("Run Successful!")
         print("press enter to exit...")
